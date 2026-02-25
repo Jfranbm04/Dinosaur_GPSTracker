@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
@@ -14,11 +15,11 @@ public class GPSTracker : MonoBehaviour
     public GameObject dinosaurio2Prefab; 
     public GameObject dinosaurio3Prefab; 
     private GameObject spawnedDinosaur;
+    public float distancePush = 1.0f;
 
     [Header("UI General")]
     public TextMeshProUGUI gpsStatusText;
     public TextMeshProUGUI distanceText;
-    public GameObject panelVictoria;
 
     [Header("UI Minijuego de Captura")]
     public GameObject combatUI; 
@@ -38,7 +39,7 @@ public class GPSTracker : MonoBehaviour
     public double currentLat;
     public double currentLon;
     private bool isSpawned = false;
-    private float detectionRadius = 15f;
+    public float detectionRadius = 3f;
 
     public List<Dinosaur> dinosaurs = new List<Dinosaur>();
     public int currentDinosaurIndex = 0;
@@ -51,7 +52,6 @@ public class GPSTracker : MonoBehaviour
 
     void Start()
     {
-        panelVictoria.SetActive(false);
         combatUI.SetActive(false);
         StartGPS();
         LoadDinosaur();
@@ -107,10 +107,10 @@ public class GPSTracker : MonoBehaviour
 
     void LoadDinosaur()
     {
-        // Solo cargamos 3 dinosaurios para que coincidan con los 3 prefabs
-        dinosaurs.Add(new Dinosaur { dinosaurName = "Triceratops", latitude = 37.19222686616466, longitude = -3.616983154096119, defeated = false });
-        dinosaurs.Add(new Dinosaur { dinosaurName = "Velociraptor", latitude = 37.191878754572755, longitude = -3.617152208305987, defeated = false });
-        dinosaurs.Add(new Dinosaur { dinosaurName = "T-Rex", latitude = 37.1922275014041, longitude = -3.6169823566711927, defeated = false });
+        // Solo cargamos 3 dinosaurios para que coincidan con los 3 prefabs  
+        dinosaurs.Add(new Dinosaur { dinosaurName = "Triceratops", latitude = 37.19224360813632, longitude = -3.6166219962033583, defeated = false });
+        dinosaurs.Add(new Dinosaur { dinosaurName = "Velociraptor", latitude = 37.19224040311745, longitude =  -3.616605902949125, defeated = false });
+        dinosaurs.Add(new Dinosaur { dinosaurName = "T-Rex", latitude = 37.19228313669113, longitude = -3.616675640384137, defeated = false });
     }
 
     #endregion
@@ -152,23 +152,23 @@ public class GPSTracker : MonoBehaviour
 
     #region Spawn Dinosaur
 
+    // Fragmento modificado de la función SpawnDinosaurInAr en GPSTracker.cs
+
     void SpawnDinosaurInAr()
     {
         if (isSpawned) return;
-
         isSpawned = true;
 
         List<ARRaycastHit> hits = new List<ARRaycastHit>();
-
-        if (raycastManager.Raycast(
-            new Vector2(Screen.width / 2, Screen.height / 2),
-            hits,
-            UnityEngine.XR.ARSubsystems.TrackableType.Planes))
+        if (raycastManager.Raycast(new Vector2(Screen.width / 2, Screen.height / 2), hits, UnityEngine.XR.ARSubsystems.TrackableType.Planes))
         {
-            Vector3 spawnPosition = hits[0].pose.position;
-            Quaternion spawnRotation = hits[0].pose.rotation;
+            // 1. Posición: Punto de impacto + Empuje hacia adelante para que no esté pegado
+            Vector3 hitPosition = hits[0].pose.position;
+            Vector3 camForward = Camera.main.transform.forward;
+            camForward.y = 0;
+            Vector3 finalPosition = hitPosition + (camForward.normalized * distancePush);
 
-            // Seleccionar el prefab fijo correspondiente al índice
+            // 2. Selección de Prefab
             GameObject prefabToSpawn = null;
             if (currentDinosaurIndex == 0) prefabToSpawn = dinosaurio1Prefab;
             else if (currentDinosaurIndex == 1) prefabToSpawn = dinosaurio2Prefab;
@@ -176,14 +176,16 @@ public class GPSTracker : MonoBehaviour
 
             if (prefabToSpawn != null)
             {
-                spawnedDinosaur = Instantiate(prefabToSpawn, spawnPosition, spawnRotation);
+                // 3. Instanciar respetando la rotación original del Prefab
+                spawnedDinosaur = Instantiate(prefabToSpawn, finalPosition, prefabToSpawn.transform.rotation);
+
+                // 4. (Opcional) Hacer que el PADRE mire al jugador, pero respetando la rotación interna del HIJO
+                spawnedDinosaur.transform.LookAt(new Vector3(Camera.main.transform.position.x, spawnedDinosaur.transform.position.y, Camera.main.transform.position.z));
+
                 StartCaptureMinigame();
             }
         }
-        else
-        {
-            isSpawned = false;
-        }
+        else { isSpawned = false; }
     }
 
     #endregion
@@ -253,15 +255,7 @@ public class GPSTracker : MonoBehaviour
     {
         isMinigameActive = false;
         ClearButtons();
-
-        // Si pierdes, el dinosaurio huye. Se resetea el estado para intentarlo de nuevo.
-        combatUI.SetActive(false);
-        if (spawnedDinosaur != null)
-        {
-            Destroy(spawnedDinosaur);
-            spawnedDinosaur = null;
-        }
-        isSpawned = false;
+        SceneManager.LoadScene("loseScreen");
     }
 
     void ClearButtons()
@@ -287,7 +281,7 @@ public class GPSTracker : MonoBehaviour
 
         if (currentDinosaurIndex >= dinosaurs.Count)
         {
-            panelVictoria.SetActive(true);
+            SceneManager.LoadScene("WinningScene");
         }
     }
 

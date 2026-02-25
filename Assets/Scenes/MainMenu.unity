@@ -1068,7 +1068,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1baf61d335d38d04ea225fcb541cbbee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuManager
-  canvasHTP: {fileID: 0}
+  canvasHTP: {fileID: 568969075}
 --- !u!4 &1052027431
 Transform:
   m_ObjectHideFlags: 0
