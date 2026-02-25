@@ -39,7 +39,7 @@ public class GPSTracker : MonoBehaviour
     public double currentLat;
     public double currentLon;
     private bool isSpawned = false;
-    private float detectionRadius = 15f;
+    public float detectionRadius = 3f;
 
     public List<Dinosaur> dinosaurs = new List<Dinosaur>();
     public int currentDinosaurIndex = 0;
