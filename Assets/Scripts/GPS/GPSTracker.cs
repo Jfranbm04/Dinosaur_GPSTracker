@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using System.Threading;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
@@ -10,20 +8,32 @@ public class GPSTracker : MonoBehaviour
 {
     public static GPSTracker Instance;
 
-    [Header("AR")]
+    [Header("AR - Dinosaurios (3 Prefabs)")]
     public ARRaycastManager raycastManager;
-    public GameObject[] dinosaurPrefabs;
+    public GameObject dinosaurio1Prefab; 
+    public GameObject dinosaurio2Prefab; 
+    public GameObject dinosaurio3Prefab; 
     private GameObject spawnedDinosaur;
 
-    [Header("UI")]
+    [Header("UI General")]
     public TextMeshProUGUI gpsStatusText;
     public TextMeshProUGUI distanceText;
-    public GameObject combatUI;
     public GameObject panelVictoria;
 
-    [Header("Music")]
-    public AudioSource combatMusic;
-    public AudioSource spawnMusic;
+    [Header("UI Minijuego de Captura")]
+    public GameObject combatUI; 
+    public RectTransform captureArea; 
+    public GameObject captureButtonPrefab; 
+    public TextMeshProUGUI timerText; 
+
+    [Header("Configuración Minijuego")]
+    public int buttonsToSpawn = 5; 
+    public float timeToCapture = 5f; 
+
+    private float currentTimer;
+    private int buttonsPressed;
+    private bool isMinigameActive = false;
+    private List<GameObject> activeButtons = new List<GameObject>();
 
     public double currentLat;
     public double currentLon;
@@ -32,18 +42,11 @@ public class GPSTracker : MonoBehaviour
 
     public List<Dinosaur> dinosaurs = new List<Dinosaur>();
     public int currentDinosaurIndex = 0;
-    private DinosaurController db;
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     void Start()
@@ -62,6 +65,18 @@ public class GPSTracker : MonoBehaviour
         {
             CheckDinosaurDistance();
         }
+
+        // Lógica del temporizador del minijuego
+        if (isMinigameActive)
+        {
+            currentTimer -= Time.deltaTime;
+            timerText.text = $"Tiempo: {currentTimer:F1}s";
+
+            if (currentTimer <= 0)
+            {
+                LoseMinigame();
+            }
+        }
     }
 
     #region GPS
@@ -73,7 +88,6 @@ public class GPSTracker : MonoBehaviour
             gpsStatusText.text = "GPS no habilitado";
             return;
         }
-
         Input.location.Start();
     }
 
@@ -90,13 +104,13 @@ public class GPSTracker : MonoBehaviour
     #endregion
 
     #region Dinosaurs
+
     void LoadDinosaur()
     {
-        /*Coordenadas para probar*/
-        dinosaurs.Add(new Dinosaur { dinosaurName = "T-Rex", latitude = 37.19222686616466, longitude = -3.616983154096119, health = 100, defeated = false });
-        dinosaurs.Add(new Dinosaur { dinosaurName = "Triceratops", latitude = 37.191878754572755, longitude = -3.617152208305987, health = 150, defeated = false });
-        dinosaurs.Add(new Dinosaur { dinosaurName = "Velociraptor", latitude = 37.1922275014041, longitude = -3.6169823566711927, health = 130, defeated = false });
-        dinosaurs.Add(new Dinosaur { dinosaurName = "Estegosaurio", latitude = 37.192095371646886, longitude = -3.616837225226872, health = 120, defeated = false });
+        // Solo cargamos 3 dinosaurios para que coincidan con los 3 prefabs
+        dinosaurs.Add(new Dinosaur { dinosaurName = "Triceratops", latitude = 37.19222686616466, longitude = -3.616983154096119, defeated = false });
+        dinosaurs.Add(new Dinosaur { dinosaurName = "Velociraptor", latitude = 37.191878754572755, longitude = -3.617152208305987, defeated = false });
+        dinosaurs.Add(new Dinosaur { dinosaurName = "T-Rex", latitude = 37.1922275014041, longitude = -3.6169823566711927, defeated = false });
     }
 
     #endregion
@@ -120,7 +134,7 @@ public class GPSTracker : MonoBehaviour
 
     double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
     {
-        double R = 6371000; // Radio de la Tierra en metros
+        double R = 6371000;
         double dLat = ToRadians(lat2 - lat1);
         double dLon = ToRadians(lon2 - lon1);
 
@@ -154,23 +168,17 @@ public class GPSTracker : MonoBehaviour
             Vector3 spawnPosition = hits[0].pose.position;
             Quaternion spawnRotation = hits[0].pose.rotation;
 
-            spawnMusic.Play();
+            // Seleccionar el prefab fijo correspondiente al índice
+            GameObject prefabToSpawn = null;
+            if (currentDinosaurIndex == 0) prefabToSpawn = dinosaurio1Prefab;
+            else if (currentDinosaurIndex == 1) prefabToSpawn = dinosaurio2Prefab;
+            else if (currentDinosaurIndex == 2) prefabToSpawn = dinosaurio3Prefab;
 
-            spawnedDinosaur = Instantiate(
-                dinosaurPrefabs[currentDinosaurIndex],
-                spawnPosition,
-                spawnRotation
-            );
-
-            db = spawnedDinosaur.GetComponent<DinosaurController>();
-            db.Initialize(dinosaurs[currentDinosaurIndex].health, combatUI.GetComponentInChildren<TextMeshProUGUI>());
-
-            if (combatMusic != null && !combatMusic.isPlaying)
+            if (prefabToSpawn != null)
             {
-                combatMusic.Play();
+                spawnedDinosaur = Instantiate(prefabToSpawn, spawnPosition, spawnRotation);
+                StartCaptureMinigame();
             }
-
-            combatUI.SetActive(true);
         }
         else
         {
@@ -180,14 +188,89 @@ public class GPSTracker : MonoBehaviour
 
     #endregion
 
-    #region Combat
+    #region Minijuego de Captura
 
-    public void Shoot()
+    void StartCaptureMinigame()
     {
+        combatUI.SetActive(true);
+        isMinigameActive = true;
+        currentTimer = timeToCapture;
+        buttonsPressed = 0;
+
+        ClearButtons();
+
+        // Generar los botones aleatorios
+        for (int i = 0; i < buttonsToSpawn; i++)
+        {
+            SpawnRandomButton();
+        }
+    }
+
+    void SpawnRandomButton()
+    {
+        GameObject btnObj = Instantiate(captureButtonPrefab, captureArea);
+        RectTransform btnRect = btnObj.GetComponent<RectTransform>();
+
+        // Calcular posición aleatoria dentro de los límites del captureArea
+        float width = captureArea.rect.width;
+        float height = captureArea.rect.height;
+
+        // Se asume que el pivote del captureArea es (0.5, 0.5)
+        float randomX = Random.Range(-width / 2f, width / 2f);
+        float randomY = Random.Range(-height / 2f, height / 2f);
+
+        btnRect.anchoredPosition = new Vector2(randomX, randomY);
+
+        // Añadir evento de pulsación
+        Button btn = btnObj.GetComponent<Button>();
+        btn.onClick.AddListener(() => OnCaptureButtonClicked(btnObj));
+
+        activeButtons.Add(btnObj);
+    }
+
+    public void OnCaptureButtonClicked(GameObject clickedButton)
+    {
+        if (!isMinigameActive) return;
+
+        activeButtons.Remove(clickedButton);
+        Destroy(clickedButton);
+        buttonsPressed++;
+
+        if (buttonsPressed >= buttonsToSpawn)
+        {
+            WinMinigame();
+        }
+    }
+
+    void WinMinigame()
+    {
+        isMinigameActive = false;
+        ClearButtons();
+        DinosaurDefeated(); // Pasa al siguiente dinosaurio
+    }
+
+    void LoseMinigame()
+    {
+        isMinigameActive = false;
+        ClearButtons();
+
+        // Si pierdes, el dinosaurio huye. Se resetea el estado para intentarlo de nuevo.
+        combatUI.SetActive(false);
         if (spawnedDinosaur != null)
         {
-            spawnedDinosaur.GetComponent<DinosaurController>().TakeDamage(20);
+            Destroy(spawnedDinosaur);
+            spawnedDinosaur = null;
         }
+        isSpawned = false;
+    }
+
+    void ClearButtons()
+    {
+        foreach (var btn in activeButtons)
+        {
+            if (btn != null) Destroy(btn);
+        }
+        activeButtons.Clear();
     }
 
     public void DinosaurDefeated()
