@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using UnityEngine.UI; // Necesario para el Slider y Button
 using UnityEngine.XR.ARFoundation;
 
 public class GPSTracker : MonoBehaviour
@@ -11,31 +11,36 @@ public class GPSTracker : MonoBehaviour
 
     [Header("AR - Dinosaurios (3 Prefabs)")]
     public ARRaycastManager raycastManager;
-    public GameObject dinosaurio1Prefab; 
-    public GameObject dinosaurio2Prefab; 
-    public GameObject dinosaurio3Prefab; 
+    public GameObject dinosaurio1Prefab;
+    public GameObject dinosaurio2Prefab;
+    public GameObject dinosaurio3Prefab;
     private GameObject spawnedDinosaur;
-    public float distancePush = 1.0f;
+    public float distancePush = 2.0f; // Un poco más de empuje para ver mejor la barra
 
     [Header("UI General")]
     public TextMeshProUGUI gpsStatusText;
     public TextMeshProUGUI distanceText;
 
     [Header("UI Minijuego de Captura")]
-    public GameObject combatUI; 
-    public RectTransform captureArea; 
-    public GameObject captureButtonPrefab; 
-    public TextMeshProUGUI timerText; 
+    public GameObject combatUI;
+    public RectTransform captureArea;
+    public GameObject captureButtonPrefab;
+    public TextMeshProUGUI timerText;
+
+    [Header("Barra de Captura")]
+    public Slider captureSlider; // Arrastra aquí tu UI Slider
+    public TextMeshProUGUI capturePercentageText; // Arrastra aquí tu texto de %
 
     [Header("Configuración Minijuego")]
-    public int buttonsToSpawn = 5; 
-    public float timeToCapture = 5f; 
+    public int buttonsToSpawn = 10; // Ahora son 10 botones
+    public float timeToCapture = 8f; // Un poco más de tiempo para 10 botones
 
     private float currentTimer;
     private int buttonsPressed;
     private bool isMinigameActive = false;
     private List<GameObject> activeButtons = new List<GameObject>();
 
+    [Header("GPS Settings")]
     public double currentLat;
     public double currentLon;
     private bool isSpawned = false;
@@ -66,7 +71,6 @@ public class GPSTracker : MonoBehaviour
             CheckDinosaurDistance();
         }
 
-        // Lógica del temporizador del minijuego
         if (isMinigameActive)
         {
             currentTimer -= Time.deltaTime;
@@ -107,9 +111,8 @@ public class GPSTracker : MonoBehaviour
 
     void LoadDinosaur()
     {
-        // Solo cargamos 3 dinosaurios para que coincidan con los 3 prefabs  
         dinosaurs.Add(new Dinosaur { dinosaurName = "Triceratops", latitude = 37.19224360813632, longitude = -3.6166219962033583, defeated = false });
-        dinosaurs.Add(new Dinosaur { dinosaurName = "Velociraptor", latitude = 37.19224040311745, longitude =  -3.616605902949125, defeated = false });
+        dinosaurs.Add(new Dinosaur { dinosaurName = "Velociraptor", latitude = 37.19224040311745, longitude = -3.616605902949125, defeated = false });
         dinosaurs.Add(new Dinosaur { dinosaurName = "T-Rex", latitude = 37.19228313669113, longitude = -3.616675640384137, defeated = false });
     }
 
@@ -122,11 +125,10 @@ public class GPSTracker : MonoBehaviour
         if (currentDinosaurIndex >= dinosaurs.Count) return;
 
         Dinosaur currentDinosaur = dinosaurs[currentDinosaurIndex];
-
         double distance = CalculateDistance(currentLat, currentLon, currentDinosaur.latitude, currentDinosaur.longitude);
-        distanceText.text = $"Distancia al {currentDinosaur.dinosaurName}: {distance:F2} metros";
+        distanceText.text = $"Distancia al {currentDinosaur.dinosaurName}: {distance:F2} m";
 
-        if (distance <= detectionRadius && !isSpawned)
+        if (distance <= (double)detectionRadius && !isSpawned)
         {
             SpawnDinosaurInAr();
         }
@@ -152,8 +154,6 @@ public class GPSTracker : MonoBehaviour
 
     #region Spawn Dinosaur
 
-    // Fragmento modificado de la función SpawnDinosaurInAr en GPSTracker.cs
-
     void SpawnDinosaurInAr()
     {
         if (isSpawned) return;
@@ -162,13 +162,11 @@ public class GPSTracker : MonoBehaviour
         List<ARRaycastHit> hits = new List<ARRaycastHit>();
         if (raycastManager.Raycast(new Vector2(Screen.width / 2, Screen.height / 2), hits, UnityEngine.XR.ARSubsystems.TrackableType.Planes))
         {
-            // 1. Posición: Punto de impacto + Empuje hacia adelante para que no esté pegado
             Vector3 hitPosition = hits[0].pose.position;
             Vector3 camForward = Camera.main.transform.forward;
             camForward.y = 0;
             Vector3 finalPosition = hitPosition + (camForward.normalized * distancePush);
 
-            // 2. Selección de Prefab
             GameObject prefabToSpawn = null;
             if (currentDinosaurIndex == 0) prefabToSpawn = dinosaurio1Prefab;
             else if (currentDinosaurIndex == 1) prefabToSpawn = dinosaurio2Prefab;
@@ -176,10 +174,7 @@ public class GPSTracker : MonoBehaviour
 
             if (prefabToSpawn != null)
             {
-                // 3. Instanciar respetando la rotación original del Prefab
                 spawnedDinosaur = Instantiate(prefabToSpawn, finalPosition, prefabToSpawn.transform.rotation);
-
-                // 4. (Opcional) Hacer que el PADRE mire al jugador, pero respetando la rotación interna del HIJO
                 spawnedDinosaur.transform.LookAt(new Vector3(Camera.main.transform.position.x, spawnedDinosaur.transform.position.y, Camera.main.transform.position.z));
 
                 StartCaptureMinigame();
@@ -199,9 +194,12 @@ public class GPSTracker : MonoBehaviour
         currentTimer = timeToCapture;
         buttonsPressed = 0;
 
+        // Reset de la barra de vida/captura
+        if (captureSlider != null) captureSlider.value = 0;
+        if (capturePercentageText != null) capturePercentageText.text = "0%";
+
         ClearButtons();
 
-        // Generar los botones aleatorios
         for (int i = 0; i < buttonsToSpawn; i++)
         {
             SpawnRandomButton();
@@ -213,17 +211,14 @@ public class GPSTracker : MonoBehaviour
         GameObject btnObj = Instantiate(captureButtonPrefab, captureArea);
         RectTransform btnRect = btnObj.GetComponent<RectTransform>();
 
-        // Calcular posición aleatoria dentro de los límites del captureArea
         float width = captureArea.rect.width;
         float height = captureArea.rect.height;
 
-        // Se asume que el pivote del captureArea es (0.5, 0.5)
-        float randomX = Random.Range(-width / 2f, width / 2f);
-        float randomY = Random.Range(-height / 2f, height / 2f);
+        float randomX = Random.Range(-width / 2.2f, width / 2.2f);
+        float randomY = Random.Range(-height / 2.2f, height / 2.2f);
 
         btnRect.anchoredPosition = new Vector2(randomX, randomY);
 
-        // Añadir evento de pulsación
         Button btn = btnObj.GetComponent<Button>();
         btn.onClick.AddListener(() => OnCaptureButtonClicked(btnObj));
 
@@ -238,6 +233,11 @@ public class GPSTracker : MonoBehaviour
         Destroy(clickedButton);
         buttonsPressed++;
 
+        // Actualizar Barra y Texto de Porcentaje
+        float progress = (float)buttonsPressed / (float)buttonsToSpawn;
+        if (captureSlider != null) captureSlider.value = progress;
+        if (capturePercentageText != null) capturePercentageText.text = $"{(int)(progress * 100)}%";
+
         if (buttonsPressed >= buttonsToSpawn)
         {
             WinMinigame();
@@ -248,7 +248,7 @@ public class GPSTracker : MonoBehaviour
     {
         isMinigameActive = false;
         ClearButtons();
-        DinosaurDefeated(); // Pasa al siguiente dinosaurio
+        DinosaurDefeated();
     }
 
     void LoseMinigame()
@@ -271,7 +271,7 @@ public class GPSTracker : MonoBehaviour
     {
         dinosaurs[currentDinosaurIndex].defeated = true;
 
-        Destroy(spawnedDinosaur);
+        if (spawnedDinosaur != null) Destroy(spawnedDinosaur);
         spawnedDinosaur = null;
 
         isSpawned = false;
