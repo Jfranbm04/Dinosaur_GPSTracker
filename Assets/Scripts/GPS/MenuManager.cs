@@ -3,18 +3,29 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
+    public Canvas canvasHTP;
     public void Menu()
     {
-        SceneManager.LoadScene("MenuGeolocalizacion");
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void Jugar()
     {
-        SceneManager.LoadScene("Geolocalizacion");
+        SceneManager.LoadScene("GPSScene");
     }
 
-    public void Instrucciones()
+    public void HTP()
     {
-        SceneManager.LoadScene("TutorialGeolocalizacion");
+        canvasHTP.gameObject.SetActive(true);
+    }
+
+    public void closeHTP()
+    {
+        canvasHTP.gameObject.SetActive(false);
+    }
+
+    public void Salir()
+    {
+        Application.Quit();
     }
 }
