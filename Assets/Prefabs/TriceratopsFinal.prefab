@@ -1,0 +1,244 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2771341440554848016
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9158995002863296315}
+  m_Layer: 0
+  m_Name: TriceratopsFinal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9158995002863296315
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2771341440554848016}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 407.09113, y: 0, z: -54.18711}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5279033922314595382}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3535339023231935465
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 8907357326796976182, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+  m_PrefabInstance: {fileID: 141615200710277586}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6001383221394617093}
+  - component: {fileID: 8211935633320336783}
+  - component: {fileID: 4335915025739472933}
+  m_Layer: 0
+  m_Name: Object_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6001383221394617093
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 1716867971528775556, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+  m_PrefabInstance: {fileID: 141615200710277586}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3535339023231935465}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3933509017373562532}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &8211935633320336783
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 8252492498221110088, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+  m_PrefabInstance: {fileID: 141615200710277586}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3535339023231935465}
+  m_Mesh: {fileID: -7227129179611170996, guid: d814d7f96f9aba84583a3e9034187731, type: 3}
+--- !u!23 &4335915025739472933
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 3687207131452525533, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+  m_PrefabInstance: {fileID: 141615200710277586}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3535339023231935465}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2895085257122057582, guid: d814d7f96f9aba84583a3e9034187731, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &3855556097930135992
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 2155996441434501719, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+  m_PrefabInstance: {fileID: 141615200710277586}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5279033922314595382}
+  m_Layer: 0
+  m_Name: Triceratops
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5279033922314595382
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+  m_PrefabInstance: {fileID: 141615200710277586}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3855556097930135992}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0.81933594, y: 0, z: -1.5865707}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3933509017373562532}
+  m_Father: {fileID: 9158995002863296315}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!1 &4038467654655225887
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 2229711568861456181, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+  m_PrefabInstance: {fileID: 141615200710277586}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3933509017373562532}
+  m_Layer: 0
+  m_Name: triceratops.obj.cleaner.materialmerger.gles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3933509017373562532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 9165884646604885754, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+  m_PrefabInstance: {fileID: 141615200710277586}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4038467654655225887}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6001383221394617093}
+  m_Father: {fileID: 5279033922314595382}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &141615200710277586
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 9158995002863296315}
+    m_Modifications:
+    - target: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.114990234
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4.4411926
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747507475719796764, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2155996441434501719, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
+      propertyPath: m_Name
+      value: Triceratops
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d00c88add376dad4e93203dd04fe4ae9, type: 3}
