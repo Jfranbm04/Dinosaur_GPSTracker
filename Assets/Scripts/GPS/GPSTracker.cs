@@ -49,6 +49,10 @@ public class GPSTracker : MonoBehaviour
     public List<Dinosaur> dinosaurs = new List<Dinosaur>();
     public int currentDinosaurIndex = 0;
 
+    [Header("Sonidos")] 
+    [SerializeField] private AudioSource buttonPressedSound;
+    
+    
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -232,6 +236,11 @@ public class GPSTracker : MonoBehaviour
         activeButtons.Remove(clickedButton);
         Destroy(clickedButton);
         buttonsPressed++;
+        if (buttonPressedSound != null)
+        {
+            buttonPressedSound.Play();
+        }
+        
 
         // Actualizar Barra y Texto de Porcentaje
         float progress = (float)buttonsPressed / (float)buttonsToSpawn;
